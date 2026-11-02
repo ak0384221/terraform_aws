@@ -21,3 +21,10 @@ output "security_group_id" {
   description = "security group id"
 
 }
+
+output "aws_vpc" {
+  value = aws_vpc.custom.id
+
+}
+
+

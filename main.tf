@@ -1,6 +1,4 @@
-data "aws_vpc" "default" {
-  default = true
-}
+
 
 data "aws_ssm_parameter" "al2023" {
   name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
@@ -20,7 +18,7 @@ resource "aws_security_group" "web-sg" {
 
   name        = "${var.name}-sg"
   description = "Allow ssh from anywhere and http fron anywhere"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = aws_vpc.custom.id
 
   tags = {
     Name = "${var.name}-sg"
@@ -63,7 +61,7 @@ resource "aws_vpc_security_group_egress_rule" "all_out" {
 resource "aws_instance" "web-ec2" {
   ami                    = data.aws_ssm_parameter.al2023.value
   instance_type          = var.instance_type
-  key_name               = data.aws_key_pair.existing.key_name
+  subnet_id              = aws_subnet.public-a[0].id
   vpc_security_group_ids = [aws_security_group.web-sg.id]
 
   user_data = <<-EOF
